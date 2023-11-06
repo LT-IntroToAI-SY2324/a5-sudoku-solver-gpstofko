@@ -1,4 +1,5 @@
-import copy  # to make a deepcopy of the board
+import copy
+from os import remove  # to make a deepcopy of the board
 from typing import List, Any, Tuple
 
 # import Stack and Queue classes for BFS/DFS
@@ -57,8 +58,10 @@ class Board:
     def __str__(self) -> str:
         """String representation of the board"""
         row_str = ""
+        row_num = 0
         for r in self.rows:
-            row_str += f"{r}\n"
+            row_str += f"row {row_num}: {r}\n\n"
+            row_num += 1
 
         return f"num_nums_placed: {self.num_nums_placed}\nboard (rows): \n{row_str}"
 
@@ -106,6 +109,9 @@ class Board:
         Returns:
             a tuple of row, column index identifying the most constrained cell
         """
+        num = 0
+
+
         pass
 
     def failure_test(self) -> bool:
@@ -125,7 +131,7 @@ class Board:
         Returns:
             True if we've placed all numbers, False otherwise
         """
-        pass
+        return self.num_nums_placed == self.size * self.size
 
     def update(self, row: int, column: int, assignment: int) -> None:
         """Assigns the given value to the cell given by passed in row and column
@@ -139,7 +145,17 @@ class Board:
             column - index of the column to assign
             assignment - value to place at given row, column coordinate
         """
-        pass
+        self.rows[row][column] = assignment
+        self.num_nums_placed += 1
+
+        for i in range(self.size):
+            remove_if_exists(self.rows[row][i], assignment)
+            remove_if_exists(self.rows[i][column], assignment)
+
+        for i, j in self.subgrid_coordinates(row, column):
+            # print(i, j)
+            remove_if_exists(self.rows[i][j], assignment)
+
 
 
 def DFS(state: Board) -> Board:
@@ -173,6 +189,14 @@ def BFS(state: Board) -> Board:
 
 
 if __name__ == "__main__":
+    b = Board()
+    print(b)
+    b.print_pretty()
+    b.update(0, 0, 4)
+    b.print_pretty()
+    print(b)
+
+
     # uncomment the below lines once you've implemented the board class
    
     # # CODE BELOW HERE RUNS YOUR BFS/DFS
@@ -194,73 +218,73 @@ if __name__ == "__main__":
     #     solution.print_pretty()
 
     # # sets of moves for the different games
-    # first_moves = [
-    #     (0, 1, 7),
-    #     (0, 7, 1),
-    #     (1, 2, 9),
-    #     (1, 3, 7),
-    #     (1, 5, 4),
-    #     (1, 6, 2),
-    #     (2, 2, 8),
-    #     (2, 3, 9),
-    #     (2, 6, 3),
-    #     (3, 1, 4),
-    #     (3, 2, 3),
-    #     (3, 4, 6),
-    #     (4, 1, 9),
-    #     (4, 3, 1),
-    #     (4, 5, 8),
-    #     (4, 7, 7),
-    #     (5, 4, 2),
-    #     (5, 6, 1),
-    #     (5, 7, 5),
-    #     (6, 2, 4),
-    #     (6, 5, 5),
-    #     (6, 6, 7),
-    #     (7, 2, 7),
-    #     (7, 3, 4),
-    #     (7, 5, 1),
-    #     (7, 6, 9),
-    #     (8, 1, 3),
-    #     (8, 7, 8),
-    # ]
+    first_moves = [
+        (0, 1, 7),
+        (0, 7, 1),
+        (1, 2, 9),
+        (1, 3, 7),
+        (1, 5, 4),
+        (1, 6, 2),
+        (2, 2, 8),
+        (2, 3, 9),
+        (2, 6, 3),
+        (3, 1, 4),
+        (3, 2, 3),
+        (3, 4, 6),
+        (4, 1, 9),
+        (4, 3, 1),
+        (4, 5, 8),
+        (4, 7, 7),
+        (5, 4, 2),
+        (5, 6, 1),
+        (5, 7, 5),
+        (6, 2, 4),
+        (6, 5, 5),
+        (6, 6, 7),
+        (7, 2, 7),
+        (7, 3, 4),
+        (7, 5, 1),
+        (7, 6, 9),
+        (8, 1, 3),
+        (8, 7, 8),
+    ]
 
-    # second_moves = [
-    #     (0, 1, 2),
-    #     (0, 3, 3),
-    #     (0, 5, 5),
-    #     (0, 7, 4),
-    #     (1, 6, 9),
-    #     (2, 1, 7),
-    #     (2, 4, 4),
-    #     (2, 7, 8),
-    #     (3, 0, 1),
-    #     (3, 2, 7),
-    #     (3, 5, 9),
-    #     (3, 8, 2),
-    #     (4, 1, 9),
-    #     (4, 4, 3),
-    #     (4, 7, 6),
-    #     (5, 0, 6),
-    #     (5, 3, 7),
-    #     (5, 6, 5),
-    #     (5, 8, 8),
-    #     (6, 1, 1),
-    #     (6, 4, 9),
-    #     (6, 7, 2),
-    #     (7, 2, 6),
-    #     (8, 1, 4),
-    #     (8, 3, 8),
-    #     (8, 5, 7),
-    #     (8, 7, 5),
-    # ]
-    # #Create a sudoku board.
-    # b = Board()
-    # #Place the 28 assignments in first_moves on the board.
-    # for trip in first_moves:
-    #     b.rows[trip[0]][trip[1]] = trip[2]
-    # #NOTE - the above code only *puts* the numbers on the board, but doesn't
-    # #   do the work that update does (remove numbers from other lists, etc).
+    second_moves = [
+        (0, 1, 2),
+        (0, 3, 3),
+        (0, 5, 5),
+        (0, 7, 4),
+        (1, 6, 9),
+        (2, 1, 7),
+        (2, 4, 4),
+        (2, 7, 8),
+        (3, 0, 1),
+        (3, 2, 7),
+        (3, 5, 9),
+        (3, 8, 2),
+        (4, 1, 9),
+        (4, 4, 3),
+        (4, 7, 6),
+        (5, 0, 6),
+        (5, 3, 7),
+        (5, 6, 5),
+        (5, 8, 8),
+        (6, 1, 1),
+        (6, 4, 9),
+        (6, 7, 2),
+        (7, 2, 6),
+        (8, 1, 4),
+        (8, 3, 8),
+        (8, 5, 7),
+        (8, 7, 5),
+    ]
+    #Create a sudoku board.
+    b = Board()
+    #Place the 28 assignments in first_moves on the board.
+    for trip in first_moves:
+        b.rows[trip[0]][trip[1]] = trip[2]
+    #NOTE - the above code only *puts* the numbers on the board, but doesn't
+    #   do the work that update does (remove numbers from other lists, etc).
 
     # #I'm going to now alter 3 lists on the board to make them shorter (more
     # #   constrained. 
