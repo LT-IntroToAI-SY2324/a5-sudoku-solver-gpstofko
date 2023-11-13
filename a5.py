@@ -109,10 +109,15 @@ class Board:
         Returns:
             a tuple of row, column index identifying the most constrained cell
         """
-        num = 0
+        mini = self.size
+        pos = (0, 0)
+        for i in range(self.size):
+            for j in range(self.size):
+                if isinstance(self.rows[i][j], list) and len(self.rows[i][j]) < mini:
+                    mini = len(self.rows[i][j])
+                    pos = (i, j)
+        return pos
 
-
-        pass
 
     def failure_test(self) -> bool:
         """Check if we've failed to correctly fill out the puzzle. If we find a cell
@@ -122,7 +127,11 @@ class Board:
         Returns:
             True if we have failed to fill out the puzzle, False otherwise
         """
-        pass
+        for row in self.rows:
+            for cell in row:
+                if cell == []:
+                    return True
+        return False
 
     def goal_test(self) -> bool:
         """Check if we've completed the puzzle (if we've placed all the numbers).
@@ -170,8 +179,21 @@ def DFS(state: Board) -> Board:
     Returns:
         either None in the case of invalid input or a solved board
     """
-    pass
-
+    the_stack = Stack([state])
+    while not the_stack.is_empty():
+        print(the_stack)
+        curr = the_stack.pop()
+        if curr.goal_test():
+            return curr
+        elif not curr.failure_test():
+            row, col = curr.find_most_constrained_cell()
+            sel = curr.rows[row][col]
+            for el in sel:
+                cpy = copy.deepcopy(curr)
+                cpy.update(row, col, el)
+                the_stack.push(cpy)
+    return None
+    
 
 def BFS(state: Board) -> Board:
     """Performs a breadth first search. Takes a Board and attempts to assign values to
@@ -189,12 +211,12 @@ def BFS(state: Board) -> Board:
 
 
 if __name__ == "__main__":
-    b = Board()
-    print(b)
-    b.print_pretty()
-    b.update(0, 0, 4)
-    b.print_pretty()
-    print(b)
+    # b = Board()
+    # print(b)
+    # b.print_pretty()
+    # b.update(0, 0, 4)
+    # b.print_pretty()
+    # print(b)
 
 
     # uncomment the below lines once you've implemented the board class
@@ -279,11 +301,11 @@ if __name__ == "__main__":
         (8, 7, 5),
     ]
     #Create a sudoku board.
-    b = Board()
-    #Place the 28 assignments in first_moves on the board.
-    for trip in first_moves:
-        b.rows[trip[0]][trip[1]] = trip[2]
-    #NOTE - the above code only *puts* the numbers on the board, but doesn't
+    # b = Board()
+    # #Place the 28 assignments in first_moves on the board.
+    # for trip in first_moves:
+    #     b.rows[trip[0]][trip[1]] = trip[2]
+    # #NOTE - the above code only *puts* the numbers on the board, but doesn't
     #   do the work that update does (remove numbers from other lists, etc).
 
     # #I'm going to now alter 3 lists on the board to make them shorter (more
@@ -314,11 +336,17 @@ if __name__ == "__main__":
 
     # ##Now, let's write some quick tests to check update!
     # #Create a sudoku board.
-    # g = Board()
-    # #Place the 28 assignments in first_moves on the board.
-    # for trip in first_moves:
-    #     g.update(trip[0],trip[1],trip[2])
-    # g.print_pretty()
+    g = Board()
+    #Place the 28 assignments in first_moves on the board.
+    for trip in first_moves:
+        g.update(trip[0],trip[1],trip[2])
+    g.print_pretty()
+    print(g)
+    sol = DFS(g)
+    sol.print_pretty()
+    # print(g.find_most_constrained_cell())
+    # print(g.failure_test())
+
     # #From the above print statement, you can see which numbers
     # #  have been assigned to the board, and then create test
     # #  cases by looking at the board and listing what values are
