@@ -31,5 +31,5 @@ You could use a weighted graph data structure and assign a weight to each possib
 
 
 3. Considering the current implementation, how might the Sudoku solver be adapted or extended for larger puzzles or different types of grid-based logic games? How can the lessons learned from this assignment be applied to real-world problem-solving or optimization challenges?
-
+To adapt or extend the sudoku solver for larger puzzlesyou would need to change the size of the puzzles, the size of sub grids, and the amount of possible numbers that each row/col/subgrid can have. The sudoker solvers search function for the best move could be applied to the picture puzzles solver, as by searching different moves to end up with a final outcome the most optimal/least amount of moves solution could be found. This assignment is useful in the real world to optimize the fastest/least amount of moves solution to things, as well as seeing how different choices play out. Have the fastest or least amount of moves to solve an issue can allow for optimization in steps for building things or for the fastest route. 
 
